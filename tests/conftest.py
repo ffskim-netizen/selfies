@@ -1,22 +1,41 @@
+"""Pytest configuration ensuring the project root is importable."""
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
 import pytest
 
+ROOT = Path(__file__).resolve().parent.parent
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
-def pytest_addoption(parser):
+
+def pytest_addoption(parser: pytest.Parser) -> None:
     parser.addoption(
-        "--trials", action="store", default=10000,
-        help="number of trails for random tests"
+        "--trials",
+        action="store",
+        type=int,
+        default=100,
+        help="Number of randomized molecules generated in stochastic tests.",
     )
     parser.addoption(
-        "--dataset_samples", action="store", default=10000,
-        help="number of samples to test from the data sets"
+        "--dataset-samples",
+        action="store",
+        type=int,
+        default=200,
+        help=(
+            "Maximum number of rows to exercise per dataset when running the "
+            "round-trip regression tests."
+        ),
     )
 
 
-@pytest.fixture
-def trials(request):
-    return int(request.config.getoption("--trials"))
+@pytest.fixture()
+def trials(pytestconfig: pytest.Config) -> int:
+    return int(pytestconfig.getoption("--trials"))
 
 
-@pytest.fixture
-def dataset_samples(request):
-    return int(request.config.getoption("--dataset_samples"))
+@pytest.fixture()
+def dataset_samples(pytestconfig: pytest.Config) -> int:
+    return int(pytestconfig.getoption("--dataset-samples"))

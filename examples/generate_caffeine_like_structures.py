@@ -167,7 +167,7 @@ def _format_output(results: Iterable[Tuple[str, Tuple[str, str]]]) -> str:
     return "\n".join(lines)
 
 
-def main() -> None:
+def main(argv: Sequence[str] | None = None) -> None:
     parser = argparse.ArgumentParser(
         description="Generate SELFIES/SMILES strings similar to caffeine",
     )
@@ -193,7 +193,7 @@ def main() -> None:
             "Increase this if you request many molecules."
         ),
     )
-    args = parser.parse_args()
+    args, _ = parser.parse_known_args(argv)
 
     results = generate_caffeine_like_structures(
         count=args.count,
